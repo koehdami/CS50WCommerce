@@ -1,0 +1,51 @@
+{% extends "auctions/layout.html" %}
+
+
+
+{% block body %}
+
+{% if auctions != "" %}
+
+<h2>Listings for {{ categoryStr }}</h2>
+
+<div class="container mt-4">
+    <div class="row">
+        {% for auction in auctions %}
+         {% if auction.open %}
+        <a class="text-decoration-none" href="{% url "auctionPage" auction.id %}">
+            <div class="card m-3" style="width: 330px; height:450px;">
+                <div class="d-flex w-100 h-50">
+                    <img src="{{auction.picture}}" style="object-fit: contain;" class="card-img-top align-self-start w-100 h-100" alt="{{auction.title}}">
+                </div>
+                <div class="card-body text-dark">
+                    <h5 class="card-title">{{auction.title}}</h5>
+                    <p class="card-text">{{ auction.description }}</p>
+                    <p class="card-text">Current Price: {{ auction.price }}€</p>
+                    <p class="m-0"><small>Created by {{ auction.owner_id.username }}</small></p>
+                </div>
+            </div>
+        </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+{% else %}
+<h2>Categories</h2>
+
+    <div class="container-fluid pt-3">
+        <div class="row d-flex justify-content-center">
+            {% for category in categories %}
+            <div class="col-3 m-2 p-0 d-flex justify-content-center align-items-center border border-1 border-dark" style="height:100px;">
+                <a class="d-flex justify-content-center align-items-center text-decoration-none w-100 h-100" href="{% url 'categories' category %}">
+                    <p class="text-center text-dark h2">{{ category }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}

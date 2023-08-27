@@ -1,0 +1,107 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body %}
+    {% if auctionData.open %}
+    <div class="d-flex justify-content-center">
+            <div style="width: 350px; height:350px;">
+                <div class="d-flex w-100 h-100">
+                    <img src="{{auctionData.picture}}" style="object-fit: contain;" class="card-img-top align-self-start w-100 h-100" alt="{{auction.title}}">
+                </div>
+            </div>
+            <div class="d-flex flex-column p-5 align-items-center text-center">
+                {% if alert %}
+                    <p class="text-danger">{{ alert }}</p>
+                {% endif %}
+                <p class="h2">{{auctionData.title}}</p>
+                <p class="h4">{{ auctionData.description }}</p>
+                {% if bids %}
+                <p class="h-5 m-0">Current Price: {{ bids.bid }}€</p>
+                {% else %}
+                <p class="h-5 m-0">Current Price: {{ auctionData.price }}€</p>
+                {% endif %}
+                <p class="m-0"><small>Category: {{ auctionData.category }}</small></p>
+                <p class="m-0"><small>Created by {{ auctionData.owner_id.username }}</small></p>
+                {% if user.username and user.id != auctionData.owner_id.id %}
+                <form action="{% url 'auctionPage' auctionData.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="d-flex">
+                        <div class="input-group d-flex">
+                            <input style="background: #dddedf;" class="form-control border-0" type="number" name="bid"  aria-label="Dollar amount (with dot and two decimal places)">
+                            <span class="input-group-text border-0">€</span>
+                        </div>
+                        <input style="width:60px;" class="mx-2 bg-primary border-0 text-light rounded rounded-2" type="submit" value="Bet">
+                    </div>
+                </form>
+                <div class="d-flex gap-5">
+                    {% endif %}
+                    {% if auctionData.owner_id.username == user.username %}
+                    <form action="{% url 'auctionPage' auctionData.id %}" method="post">
+                        {% csrf_token %}
+                        <input name="end_auction" type="submit" style="width:150px; font-size:14px;" class="bg-danger border-0 rounded rounded-2 text-light p-1 m-2" value="End Auction"></input>
+                    </form>
+                    {% endif %}
+                    {% if message and user.username%}
+                    <form action="{% url 'auctionPage' auctionData.id %}" method="post">
+                    {% csrf_token %}
+                        <input type="submit" name="auctions_id" style="width:150px; font-size:14px;" class="bg-success border-0 rounded rounded-2 text-light p-1 m-2 text-center" value="{{ message }}"></input>
+                    </from>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="container pt-5">
+            {% if user.username %}
+            <div class="row mb-3">
+                <div class="col d-flex justify-content-center">
+                    <form action="{% url 'auctionPage' auctionData.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="d-flex flex-column w-100">
+                            <label class="m-0" for="comment">Write a comment</label>
+                            <div class="d-flex">
+                                <textarea class="w-100" name="comment" id="comment" cols="60" rows="2" maxlength="128"></textarea>
+                                <input type="submit" class="bg-success text-light border-0 rounded rounded-2 mx-2" value="Comment">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+            {% if comments%}
+                {% for comment in comments reversed %}
+                <div class="row flex-column py-1 w-50">
+                        <p class="m-0">
+                            <small class="h-auto py-0 mx-3"> {{ comment.user_id.username }} </small>
+                        </p>
+                        <div class="col d-flex border border-dark border-1 rounded rounded-2 p-1 mx-3">
+                            <p class="text-break">{{ comment.comment }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% else %}
+            <div class="d-flex justify-content-center">
+                <div style="width: 350px; height:350px;">
+                    <div class="d-flex w-100 h-100">
+                        <img src="{{auctionData.picture}}" style="object-fit: contain;" class="card-img-top align-self-start w-100 h-100" alt="{{auction.title}}">
+                    </div>
+                </div>
+                <div class="d-flex flex-column p-5 align-items-center text-center">
+                    {% if alert %}
+                        <p class="text-danger">{{ alert }}</p>
+                    {% endif %}
+                    <p class="h2">{{auctionData.title}}</p>
+                    {% if bids %}
+                    <p class="h-5 m-0">Sold for: {{ bids.bid }}€</p>
+                    {% endif %}
+                    {% if auctionData.winner %}
+                    <p class="h-5 m-0">Bought by: {{ auctionData.winner.username }}</p>
+                    {% else %}
+                    <p class="h-5 m-0">No bids were placed</p>
+                    <p class="m-0">Auction Closed</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+{% endblock %}

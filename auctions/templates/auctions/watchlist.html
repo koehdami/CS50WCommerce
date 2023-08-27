@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+
+
+
+{% block body %}
+    <h2>Watchlist</h2>
+    <div class="container-fluid">
+        {% for entrie in list %}
+            {% if entrie.auctions_id.open %}
+            <div class="row my-4">
+                <div class="col d-flex flex-column align-items-start">
+                    <a class="d-flex justify-content-center align-items-center text-dark text-decoration-none" href="{% url 'auctionPage'  entrie.auctions_id.id %}">
+                        <img style="max-width:130px;" src="{{ entrie.auctions_id.picture }}"></img>
+                        <div class="d-flex flex-column px-4">
+                            <p class="h3 m-0">{{ entrie.auctions_id.title }}</p>
+                            <p class="m-0">{{ entrie.auctions_id.description }}</p>
+                            <p class="m-0">Price: {{ entrie.auctions_id.price }}€</p>
+                            <p class="m-0"><small>Created by {{ entrie.auctions_id.owner_id.username }}</small></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endif%}
+        {% endfor %}
+    </div>
+{% endblock %}
